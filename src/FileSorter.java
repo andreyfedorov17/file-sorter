@@ -1,39 +1,44 @@
 import java.io.File;
 
 public class FileSorter {
-    private File file;
-    private File sourceDir;
+    private File source;
+    private File[] files;
 
-    public FileSorter(String filePath, String sourcePath) {
-        file = new File(filePath);
-        sourceDir = new File(sourcePath);
+    public FileSorter(String sourcePath) {
+        source = new File(sourcePath);
+        files = source.listFiles();
     }
 
-    public void sort() {
-        createDir();
-        movingFile();
+    public void sorting() {
+        createDirectories();
+        movingFiles();
     }
 
-    private String getFileExtension() {
-        String fileName = file.getName();
+    private String getFileExtension(String fileName) {
         int lastIndexOf = fileName.lastIndexOf('.');
 
         if (lastIndexOf == -1) {
-            return null;
+            return "";
         }
 
         return fileName.substring(lastIndexOf + 1);
     }
 
-    private void createDir() {
-        String path = sourceDir.getPath() + "/" + getFileExtension();
-        File newDir = new File(path);
-        newDir.mkdir();
+    private void createDirectories() {
+        for (File file : files) {
+            String path = source.getPath() + "/" + getFileExtension(file.getName());
+            File newDirectory = new File(path);
+
+            if (!newDirectory.exists()) {
+                newDirectory.mkdir();
+            }
+        }
     }
 
-    private void movingFile() {
-        String name = file.getName();
-        String path = sourceDir + "/" + getFileExtension() + "/" + name;
-        file.renameTo(new File(path));
+    private void movingFiles() {
+        for (File file : files) {
+            String path = source.getPath() + "/" + getFileExtension(file.getName()) + "/" + file.getName();
+            file.renameTo(new File(path));
+        }
     }
 }
